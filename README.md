@@ -3,7 +3,7 @@
 - install vue 3
   - sudo npm install -g @vue/cli
 
--install webpack
+- install webpack
   - npm install webpack webpack-cli --save-dev
   - npm install --save-dev vue-jest
   - npm install --save-dev babel-jest
