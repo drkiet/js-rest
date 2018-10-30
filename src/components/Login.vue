@@ -1,10 +1,19 @@
 <template>
   <div id="app">
   <v-container>
+    <v-flex xs12>
+        <v-img
+          :src="require('../assets/logo.svg')"
+          class="my-3"
+          contain
+          height="100"
+        ></v-img>
+      </v-flex>
     <v-layout row class="text-xs-center">
       <v-flex xs3 style="background-image: url('http://cdn.wallpapersafari.com/7/86/gqiGH7.jpg')">
         <v-card height="500px"></v-card>
       </v-flex>
+      
       <v-flex xs4 class="grey lighten-4">
         <v-container style="position: relative;top: 13%;" class="text-xs-center">
           <v-card flat>
@@ -34,7 +43,7 @@ export default {
   name: 'App',
 
   created() {
-    console.log('App is created.')
+    console.log('Login.vue is created.')
   },
   
   components: {
@@ -44,14 +53,26 @@ export default {
   methods: {
     ...mapActions('users', ['signIn']),
 
+    /**
+     * When a user click the 'login' button, I would expect the following
+     * activities to occur:
+     * 
+     * 1. signIn method (actions) of the users module is invoked.
+     */
     login() {
-      console.log(`login button clicked! ${this.input.username}:${this.input.password}`);
+      console.log(`Login with: ${this.input.username}:${this.input.password}`);
+      console.log('*** calling users.signIn() begins')
       this.signIn(Object.assign({}, this.input))
-        .then(() => {
-          console.log('then is called.')
+        .then((response) => {
+          console.log('=== login completes successfully: ' + response)
           this.$router.push('/hr')
-          console.log('should be at human review now ...')
         })
+        .catch((error) => {
+          console.error("=== Login failed: " + error.response.status)
+          console.error("=== Login failed: " + error.response.data)
+          this.$router.push('/error')
+        })
+        console.log('*** calling users.signIn() ends')
     }
   },
 

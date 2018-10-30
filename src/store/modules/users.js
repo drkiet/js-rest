@@ -37,11 +37,24 @@ export default {
         password: `${input.password}`,
       }
 
-      axios.put('http://localhost:8080/api/v1/user', authCredentials, config)
-        .then(result => commit('saveAuthToken', result.data))
-        .catch((result) => {
-          console.log('Error ' + result.data)
-          commit('saveAuthToken', result.data)
+      console.log('*** calling axios.put() begins')
+
+      return new Promise((resolve, reject) => {
+        axios.put('http://localhost:8080/api/v1/user', authCredentials, config)
+        .then((result) => {
+          console.log('--- axios.put completes successfully: ' + result.data)
+          setTimeout(() => {
+            commit('saveAuthToken', result.data)
+            resolve()
+          }, 1000)
+        })
+        .catch((error) => {
+          console.log('--- axios.put failed: ' + error.response.data)
+          setTimeout(() => {
+            commit('saveAuthToken', error.response.data)
+            reject(error)
+          }, 1000)
+        })
       })
     }
   }

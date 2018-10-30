@@ -17,6 +17,10 @@ export default {
     updateHrItems(state, items) {
       state.hrItems = items
       
+      if (state.hrItems === null) {
+        return
+      }
+
       state.hrItems.filter((item) => {
         let found = false
         state.stixIds.forEach(stixId => {
@@ -38,6 +42,7 @@ export default {
 
   getters: {
     hrItems: state => {
+      console.log('getter.state: ' + state)
       if (state.hrItems != null) {
         console.log('hrItems length: ' + state.hrItems.length)
       } else {
@@ -52,7 +57,13 @@ export default {
   },
 
   actions: {
+    nullHrItems({ commit }) {
+      console.log('Nullify hrItems for a reload....')
+      commit('updateHrItems', null)
+    },
+
     getHrItems({ commit }, authToken ) {
+      console.log('getting HR items ...')
       if (authToken === null) {
         return
       }
@@ -63,12 +74,24 @@ export default {
           'token': `${authToken}`
         },
       }
+      
       console.log('authToken: ', authToken)
-
-      axios.get('http://localhost:8080/api/v1/humanreview/pending', config)
-        .then(result => commit('updateHrItems', result.data))
-        .catch((result) => {
-          console.log('Error ' + result.data)
+      return new Promise((resolve, reject) => {
+        axios.get('http://localhost:8080/api/v1/humanreview/pending', config)
+          .then((result) => {
+            console.log('axios.get completes successfully.')
+            setTimeout(() => {
+              commit('updateHrItems', result.data)
+              resolve()
+            }, 1000)
+            
+          })
+          .catch((error) => {
+            console.log('Error ' + error.response.status)
+            setTimeout(() => {
+              reject(error)
+            }, 1000)
+        })
       })
     },
 
@@ -99,11 +122,22 @@ export default {
 
       const urlStr = `http://localhost:8080/api/v1/humanreview/${input.hrItem.stix_id}/${input.hrItem.field_name}`
       
-      axios.put(urlStr, null, config)
-        .then(result => commit('updateHrItem', result.data))
-        .catch((result) => {
-          console.log('Error ' + result.data)
-        })
+      return new Promise((resolve, reject) => {
+        axios.put(urlStr, null, config)
+          .then((result) => {
+            setTimeout(() => {
+              commit('updateHrItem', result.data)
+              resolve()
+            }, 1000)
+            
+          })
+          .catch((error) => {
+            console.log('Error ' + error.response.status)
+            setTimeout(() => {
+              reject(error)
+            }, 1000)
+          })
+      })
     }
   }
 }

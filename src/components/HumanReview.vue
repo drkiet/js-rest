@@ -1,68 +1,77 @@
 <template>
   <div id="message">
-    <h4>Welcome to Human Review Pending Page</h4>
-    <h4>authToken: {{ authToken }}</h4>
-    
-    <div v-if="emptyList">list is empty</div>
-    <div v-else>list is NOT empty
-      {{ hrItems[0].stix_id }}
-      <v-data-table 
-        :headers="mainHeaders" 
-        :items="stixIds"
-        item-key="stix_id"
-        hide-actions
-        expand>
-        <template slot="items" scope="props">
-          <!-- <tr @click="props.expanded = !props.expanded; selected(props.item.stix_id)">  -->
-          <tr>
-            <td @click="props.expanded = !props.expanded; selected(props.item)" class="text-xs">{{ props.item.stix_id }}</td> 
-            <td class="text-xs"><v-checkbox></v-checkbox></td>
-            <td class="text-xs"><v-checkbox></v-checkbox></td>
-            <td class="text-xs"><v-checkbox></v-checkbox></td>
-          </tr>
-        </template>
-        <template slot="expand" scope="props">
-          <v-card class="elevation-10">
-            <v-card-text>
-              <v-data-table :headers="subHeaders"
-                      :items="subItems"
-                      item-key="color"
-                      hide-actions
-                      class="elevation-10">
-                <template slot="items" scope="props">
-                  <td class="text-xs">{{ props.item.modified_date }}</td>
-                  <td class="text-xs">{{ props.item.object_type }}</td>
-                  <td class="text-xs">{{ props.item.field_name }}</td>
-                  <td class="text-xs">{{ props.item.field_value }}</td>
-                  <td class="text-xs">{{ props.item.status }}</td>
-                  <td class="text-xs">
-                    <v-radio-group v-model="props.item.action">
-                      <v-radio label="Not PII"
-                        @change="updateHrItemWithAction(props.item, 'Not PII')"
-                        value="Not PII">
-                      </v-radio>
-                      <v-radio label="Edit" 
-                        @change="updateHrItemWithAction(props.item, 'Edit')"
-                        value="Edit">
-                      </v-radio>
-                      <v-radio label="Confirm Risk" 
-                        @change="updateHrItemWithAction(props.item, 'Confirm Risk')"
-                        value="Confirm Risk">
-                      </v-radio>
-                      <v-radio label="Redact" 
-                        @change="updateHrItemWithAction(props.item, 'Redact')"
-                        value="Redact">                       
-                      </v-radio>
-                    </v-radio-group>
-                  </td>
-                </template>
-              </v-data-table>
-            </v-card-text>
-          </v-card>
-        </template>
-      </v-data-table>
-    </div>
+    <v-container>
+      <v-layout>
+        <v-flex>
+          <v-card></v-card>
+        </v-flex>
 
+        <v-flex >
+          <h1 class="text-align: center">Welcome to Human Review Pending Page</h1>
+          <h4>authToken: {{ authToken }}</h4>
+      
+          <div v-if="emptyList">list is empty</div>
+          <div v-else>list is NOT empty
+            {{ hrItems[0].stix_id }}
+            <v-data-table 
+              :headers="mainHeaders" 
+              :items="stixIds"
+              item-key="stix_id"
+              hide-actions
+              expand>
+              <template slot="items" scope="props">
+                <!-- <tr @click="props.expanded = !props.expanded; selected(props.item.stix_id)">  -->
+                <tr>
+                  <td class="monofont" @click="props.expanded = !props.expanded; selected(props.item)">{{ props.item.stix_id }}</td> 
+                  <td class="text-xs"><v-checkbox></v-checkbox></td>
+                  <td class="text-xs"><v-checkbox></v-checkbox></td>
+                  <td class="text-xs"><v-checkbox></v-checkbox></td>
+                </tr>
+              </template>
+              <template slot="expand" scope="props">
+                <v-card class="elevation-10">
+                  <v-card-text>
+                    <v-data-table :headers="subHeaders"
+                            :items="subItems"
+                            item-key="color"
+                            hide-actions
+                            class="elevation-10">
+                      <template slot="items" scope="props">
+                        <td class="text-xs">{{ props.item.modified_date }}</td>
+                        <td class="text-xs">{{ props.item.object_type }}</td>
+                        <td class="text-xs">{{ props.item.field_name }}</td>
+                        <td class="text-xs">{{ props.item.field_value }}</td>
+                        <td class="text-xs">{{ props.item.status }}</td>
+                        <td class="text-xs">
+                          <v-radio-group v-model="props.item.action">
+                            <v-radio label="Not PII"
+                              @change="updateHrItemWithAction(props.item, 'Not PII')"
+                              value="Not PII">
+                            </v-radio>
+                            <v-radio label="Edit" 
+                              @change="updateHrItemWithAction(props.item, 'Edit')"
+                              value="Edit">
+                            </v-radio>
+                            <v-radio label="Confirm Risk" 
+                              @change="updateHrItemWithAction(props.item, 'Confirm Risk')"
+                              value="Confirm Risk">
+                            </v-radio>
+                            <v-radio label="Redact" 
+                              @change="updateHrItemWithAction(props.item, 'Redact')"
+                              value="Redact">                       
+                            </v-radio>
+                          </v-radio-group>
+                        </td>
+                      </template>
+                    </v-data-table>
+                  </v-card-text>
+                </v-card>
+              </template>
+            </v-data-table>
+          </div>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
@@ -73,7 +82,7 @@ import { mapActions } from 'vuex';
 
 export default {
   created() {
-    console.log('created ...')
+    console.log('*** HumanReview.vue is created ...')
   },
 
   data () {
@@ -120,7 +129,7 @@ export default {
   },
 
   methods: {
-    ... mapActions ('hrItems', ['getHrItems', 'updateHrItem']),
+    ... mapActions ('hrItems', ['getHrItems', 'updateHrItem', 'nullHrItems']),
 
     retrieveHrItems() {
       console.log('retrieveHrItems() ...')
@@ -138,6 +147,7 @@ export default {
           this.subItems.push(item)
         }
       })
+      console.log(this.subItems.length + ' fields found!')
     },
 
     dumpHrItem(hrItem) {
@@ -162,6 +172,7 @@ export default {
       selectedItem.action = action;
       this.updateHrItem(input).then((result) => {
         console.log('updateHrItem completed!')
+        this.nullHrItems()
       })
     }
   }
@@ -169,5 +180,9 @@ export default {
 </script>
 
 <style>
+.monofont {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: large;
+}
 
 </style>
