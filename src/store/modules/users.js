@@ -41,11 +41,11 @@ export default {
 
       return new Promise((resolve, reject) => {
         axios.put('http://localhost:8080/api/v1/user', authCredentials, config)
-        .then((result) => {
-          console.log('--- axios.put completes successfully: ' + result.data)
+        .then((response) => {
+          console.log('--- axios.put completes successfully: ' + response.data)
           setTimeout(() => {
-            commit('saveAuthToken', result.data)
-            resolve()
+            commit('saveAuthToken', response.data)
+            resolve(response)
           }, 1000)
         })
         .catch((error) => {

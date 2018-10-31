@@ -58,13 +58,18 @@ export default {
      * activities to occur:
      * 
      * 1. signIn method (actions) of the users module is invoked.
+     * 2. the call returns immediately because of it is asynchronous.
+     * 3. When singIn completes, either the then () or the catch () method
+     *    is called.
+     *    - if success, the router takes the user to the /hr page.
+     *    - else, the user is routed to an error page.
      */
     login() {
       console.log(`Login with: ${this.input.username}:${this.input.password}`);
       console.log('*** calling users.signIn() begins')
       this.signIn(Object.assign({}, this.input))
         .then((response) => {
-          console.log('=== login completes successfully: ' + response)
+          console.log('=== login completes successfully: ' + response.data)
           this.$router.push('/hr')
         })
         .catch((error) => {
