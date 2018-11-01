@@ -36,8 +36,13 @@ export default {
     },
 
     updateHrItem(state, result) {
-      console.log('UpdateHirItem: ' + result)
+      console.log('UpdateHrItem: ' + result)
+    },
+
+    updateGroupAction(state, result) {
+      console.log('UpdateGroupAction: ' + result)
     }
+
   },
 
   getters: {
@@ -127,6 +132,48 @@ export default {
           .then((result) => {
             setTimeout(() => {
               commit('updateHrItem', result.data)
+              resolve()
+            }, 1000)
+            
+          })
+          .catch((error) => {
+            console.log('Error ' + error.response.status)
+            setTimeout(() => {
+              reject(error)
+            }, 1000)
+          })
+      })
+    },
+
+    groupAction({ commit }, input) {
+      console.log('authToken: ' + input.authToken)
+      console.log('stix_id: ' + input.stix_id)
+      console.log('action: ' + input.group_action)
+
+      if (input.authToken === null) {
+        return
+      }
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': input.authToken
+        },
+
+        params: {
+          'stix_id': input.stix_id,
+          'group_action': input.group_action,
+        }
+      }
+      
+
+      const urlStr = `http://localhost:8080/api/v1/humanreview/${input.stix_id}`
+      
+      return new Promise((resolve, reject) => {
+        axios.put(urlStr, null, config)
+          .then((result) => {
+            setTimeout(() => {
+              commit('updateGroupAction', result.data)
               resolve()
             }, 1000)
             
