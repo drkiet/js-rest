@@ -7,7 +7,8 @@
         </v-flex>
 
         <v-flex >
-          <h1 class="text-align: center">Welcome to Human Review Pending Page</h1>
+          <div class="q-table-title">Pending Messages</div>
+          <h1> Welcome to Human Review Pending Page</h1>
           <h4>authToken: {{ authToken }}</h4>
       
           <div v-if="emptyList">list is empty</div>

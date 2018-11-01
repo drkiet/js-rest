@@ -13,9 +13,8 @@
         <v-card height="500px"></v-card>
       </v-flex>
       <v-flex xs4 class="grey lighten-4">
-      <h1>Login failed!</h1>
-      <h3>Do try again!</h3>
-      <button @click="goHome">Click here</button>
+          <h1><div>Login failed. Please try again.</div></h1>
+        <button @click="goHome">Click here</button>
       </v-flex>
       
     </v-layout>
