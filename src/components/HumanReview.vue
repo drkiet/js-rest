@@ -25,10 +25,12 @@
                 <tr>
                   <td class="monofont" @click="props.expanded = !props.expanded; selected(props.item)">{{ props.item.stix_id }}</td> 
                   <td class="text-xs" @click="groupActionByStixId(props.item, 'Accept All')">
-                    <v-checkbox v-model="props.item.accepted">
+                    <v-checkbox v-model="props.item.accepted_all">
                     </v-checkbox></td>
-                  <td class="text-xs"><v-checkbox></v-checkbox></td>
-                  <td class="text-xs"><v-checkbox></v-checkbox></td>
+                  <td class="text-xs" @click="groupActionByStixId(props.item, 'Disseminate')">
+                    <v-checkbox></v-checkbox></td>
+                  <td class="text-xs" @click="groupActionByStixId(props.item, 'Do Not Disseminate')">
+                    <v-checkbox></v-checkbox></td>
                 </tr>
               </template>
               <template slot="expand" scope="props">
@@ -144,12 +146,14 @@ export default {
 
     selected(selectedItem) {
       console.log(selectedItem.stix_id + ' is selected!')
-      this.subItems = [];
-      this.hrItems.filter((item) => {
-        if (item.stix_id === selectedItem.stix_id) {
-          this.subItems.push(item)
-        }
-      })
+      this.subItems = selectedItem.hrItems
+      // this.subItems = [];
+
+      // this.hrItems.filter((item) => {
+      //   if (item.stix_id === selectedItem.stix_id) {
+      //     this.subItems.push(item)
+      //   }
+      // })
       console.log(this.subItems.length + ' fields found!')
     },
 
@@ -181,8 +185,23 @@ export default {
 
     groupActionByStixId(selectedStix, selectedGroupAction) {
       console.log('selelected group action: ' + selectedGroupAction)
-      console.log('selected stix_id: ' + selectedStix.stix_id)
+      console.log('stix_id: ' + selectedStix.stix_id + " --> accepted_all: " + selectedStix.accepted_all)
+      let accepted_all = true
 
+      if (selectedGroupAction === 'Accept All') {
+        selectedStix.hrItems.forEach(element => {
+          if (element.status !== 'Accepted') {
+            accepted_all = false
+          }
+
+        });
+        if (accepted_all) {
+          console.log('Already Accepted All!')
+          selectedStix.accepted_all = true
+          return
+        }
+        
+      }
       const input = {
         authToken: this.authToken,
         stix_id: selectedStix.stix_id,
@@ -193,27 +212,6 @@ export default {
         console.log('groupAction completed!')
         this.nullHrItems()
       })
-    },
-
-    stixAcceptedAll(selectedHrItem) {
-      console.log('Checking Accepted: ' + selectedHrItem.stix_id)
-      let foundStixId = false
-
-      
-      for (var i = 0; i < this.hrItems.length; i++) {
-        if (this.hrItems[i].stix_id == selectedHrItem.stix_id) {
-          foundStixId = true
-
-          if (this.hrItems[i].status !== "Accepted") {
-            console.log('NOT Accepted!')
-            return false
-          }
-        }
-          
-      }
-      
-      console.log('ALL Accepted!')
-      return foundStixId
     }
   }
 }

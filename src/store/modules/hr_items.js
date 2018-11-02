@@ -2,6 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import Vuex from 'vuex';
 
+
 Vue.use(Vuex);
 
 export default {
@@ -16,6 +17,7 @@ export default {
   mutations: {
     updateHrItems(state, items) {
       state.hrItems = items
+      state.stixIds = []
       
       if (state.hrItems === null) {
         return
@@ -30,8 +32,27 @@ export default {
         });
 
         if (!found) {
-          state.stixIds.push({stix_id: item.stix_id})
+          state.stixIds.push({
+            stix_id: item.stix_id, 
+            accepted_all: true,
+            hrItems: []
+          })
         }
+      })
+      
+      // making a list of stix ids & associated fields.
+      state.stixIds.forEach(stixId => {
+
+        state.hrItems.forEach(hrItem => {
+          if (hrItem.stix_id == stixId.stix_id) {
+            stixId.hrItems.push(hrItem)
+            if (hrItem.status !== 'Accepted') {
+              stixId.accepted_all = false
+            }
+          }
+        })
+
+        console.log('stix_id: ' + stixId.stix_id + " --> accepted_all: " + stixId.accepted_all)
       })
     },
 
